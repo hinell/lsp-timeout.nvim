@@ -1,0 +1,31 @@
+name: Bug Report
+description: File a bug report
+title: "New bug report"
+labels: ["untriaged"]
+assignees:
+  - hinell
+body: 
+  - type: textarea
+    id: issue-summary
+    attributes:
+      label: Summary
+      placeholder: "Be brief"
+      value: "."
+    validations:
+      required: true
+  - type: textarea
+    id: issue-repro
+    attributes:
+      label: Steps to reproduce
+      placeholder: Snippet of code 
+      value: "."
+    validations:
+      required: false
+  - type: textarea
+    id: issue-env
+    attributes:
+      label: Setup
+      placeholder: platform, system version, tools version...
+      value: "."
+    validations:
+      required: false
