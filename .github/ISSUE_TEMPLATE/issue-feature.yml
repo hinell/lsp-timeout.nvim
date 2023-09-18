@@ -1,0 +1,17 @@
+# https://docs.github.com/en/communities/using-templates-to-encourage-useful-issues-and-pull-requests/syntax-for-githubs-form-schema
+name: Feature request
+description: "Feature requests aren't expected, but you can try"
+title: "New feature request"
+labels: ["untriaged"]
+assignees:
+  - hinell
+body: 
+  - type: markdown
+    attributes:
+      value: "Checkout DISCUSSIONS page first and fill this requestion there! See also [CONTRIBUTING.md](./../blob/main/CONTRIBUTING.md)"
+  - type: textarea
+    id: feature-summary
+    attributes:
+      label: Summary
+      placeholder: "Be brief"
+      value: "."

@@ -1,0 +1,14 @@
+# Auto detect text files and perform LF normalization
+*        text=auto
+
+*.ico binary diff=
+*.jpg binary diff=
+*.png binary diff=
+*.gif binary diff=
+*.mp3 binary diff=
+*.mp4 binary diff=
+*.mov binary diff=
+*.xcf binary diff=
+*.zip binary diff=
+*.tar.gz binary diff=
+

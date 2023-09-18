@@ -1,0 +1,65 @@
+*lsp-timeout.txt*                               Last change: 2023 September 29
+
+==============================================================================
+Table of Contents                              *lsp-timeout-table-of-contents*
+
+OVERVIEW .............................................. |lsp-timeout-overview|
+INSTALL ................................................ |lsp-timeout-install|
+CONFIGURATION .................................... |lsp-timeout-configuration|
+
+------------------------------------------------------------------------------
+OVERVIEW                                                *lsp-timeout-overview*
+
+
+Nvim plugin for nvim-lspconfig: stop idle servers & restart upon focus; keep
+your RAM usage low
+
+
+------------------------------------------------------------------------------
+INSTALL                                                  *lsp-timeout-install*
+
+
+Use your favorite package manager (Packer, Plug, Lazy.nvim etc.)
+
+>
+    "hinell/lsp-timeout.nvim",
+<
+Prerequisites:
+
+>
+    "neovim/nvim-lspconfig" 
+<
+E.g. for packer:
+
+>lua
+    -- $HOME/.config/nvim/lua/user/init.lua
+    packer.setup(function(use)
+        use({
+    	  "hinell/lsp-timeout.nvim",
+    	  requires={ "neovim/nvim-lspconfig" },
+          setup = function()
+            vim.g["lsp-timeout-config"] = {
+                ...
+            }
+          end
+        })
+    end)
+<
+
+------------------------------------------------------------------------------
+CONFIGURATION                                      *lsp-timeout-configuration*
+
+
+>lua
+    vim.g["lsp-timeout-config"] = {
+        -- When focus is lost
+        -- wait 5 minutes before stopping all LSP servers
+        stopTimeout=1000 * 60 * 5,
+        startTimeout=1000 * 10 
+    }
+<
+September 16, 2023
+Copyright  - Alexander Davronov, et.al.<br>
+
+
+vim:tw=78:ts=8:ft=help:norl:

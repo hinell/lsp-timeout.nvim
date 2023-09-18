@@ -1,0 +1,7 @@
+{
+	"schema": "https://raw.githubusercontent.com/sumneko/vscode-lua/master/setting/schema.json",
+	"runtime": [ "" ],
+	"workspace.library": [ "/usr/local/share/nvim/runtime/lua" ],
+	"format.enable": false,
+	"workspace.checkThirdParty": false
+}
