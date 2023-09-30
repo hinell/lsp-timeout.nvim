@@ -24,8 +24,8 @@ body:
   - type: textarea
     id: issue-env
     attributes:
-      label: Setup
-      placeholder: platform, system version, tools version...
+      label: Versions
+      placeholder: "Specify all relevant VERSIONS"
       value: "."
     validations:
       required: false

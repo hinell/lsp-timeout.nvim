@@ -1,5 +1,8 @@
 lsp-timeout-configuration	lsp-timeout.txt	/*lsp-timeout-configuration*
 lsp-timeout-install	lsp-timeout.txt	/*lsp-timeout-install*
+lsp-timeout-null-ls	lsp-timeout.txt	/*lsp-timeout-null-ls*
 lsp-timeout-overview	lsp-timeout.txt	/*lsp-timeout-overview*
 lsp-timeout-table-of-contents	lsp-timeout.txt	/*lsp-timeout-table-of-contents*
+lsp-timeout-troubleshooting	lsp-timeout.txt	/*lsp-timeout-troubleshooting*
+lsp-timeout-update	lsp-timeout.txt	/*lsp-timeout-update*
 lsp-timeout.txt	lsp-timeout.txt	/*lsp-timeout.txt*

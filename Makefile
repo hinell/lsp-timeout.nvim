@@ -18,10 +18,11 @@ doc/$(PROJECT_NAME).txt: doc/index.md
 		})
 		os.exit()
 	"
-	:
-	@command -v unicode-emoji-remove.sh &> /dev/null || {
-		# Use 2> error.log to read the output of the command
-		echo -e "$0: $(tput setaf 1)error:$(tput op) unicode-emoji-remove.sh is nout found; install it from @gtihub:hinell/dotfiles" > /dev/stderr;
+	command -v unicode-emoji-remove.sh &> /dev/null || {
+		# Use 2> error.log to read the output of the command 
+		echo -e "$0: $(tput setaf 1)error:$(tput op) unicode-emoji-remove.sh is nout found; install it from" \
+				"https://github.com/hinell/dotfiles/blob/main/bash-scripts/unicode-emoji-remove.sh" \
+		> /dev/stderr;
 	}
-	@unicode-emoji-remove.sh -i $@
-	@sed -E -i -e 's/<\/br>\s*/\n/' $@
+	test -f $< && unicode-emoji-remove.sh -i $@
+	sed -E -i -e 's/<\/br>\s*/\n/' $@
