@@ -1,14 +1,16 @@
 local autocmd = vim.api.nvim_create_autocmd
+local augroup = vim.api.nvim_create_augroup
+local buffer = vim.api.nvim_get_current_buf()
+local activeServers = 0
 -- TODO: [May 12, 2023] Move into a separate plugin
 -- TODO: [June 30, 2023] This needs to take every buffer into account
 -- https://github.com/neovim/nvim-lspconfig/pull/2609
 
-
 require("lsp-timeout.config")
 
 --- Return true if no lsp-config commands are found
-vim.api.nvim_create_augroup("LspTimeout", { clear = true })
-vim.api.nvim_create_autocmd({ "BufEnter" }, {
+augroup("LspTimeout", { clear = true })
+autocmd({ "BufEnter" }, {
 	desc = "Check if nvim-lspconfig commands are available",
 	group = "LspTimeout",
 	once = true,
@@ -20,7 +22,8 @@ vim.api.nvim_create_autocmd({ "BufEnter" }, {
 		end
 	end,
 })
-vim.api.nvim_create_autocmd({ "FocusGained" }, {
+
+autocmd({ "FocusGained" }, {
 	desc = "Rerstart LSP server if buffer is intered",
 	group = "LspTimeout",
 	callback = function()
@@ -42,9 +45,15 @@ vim.api.nvim_create_autocmd({ "FocusGained" }, {
 				timeout,
 				0,
 				vim.schedule_wrap(function()
-					if #vim.lsp.get_clients({ bufnr = 0 }) < 1 then
+					if not vim.fn.has("nvim-0.9") then
+						activeServers = #vim.lsp.get_clients({ bufnr = buffer })
+					else
+						activeServers = #vim.lsp.get_active_clients({ bufnr = buffer })
+					end
+
+					if activeServers <= 1 then
 						vim.notify(
-							("[[lsp-timeout.nvim]]: %s servers found, restarting... "):format(#vim.lsp.get_clients()),
+							("[[lsp-timeout.nvim]]: %s servers found, restarting... "):format(activeServers),
 							vim.log.levels.INFO
 						)
 						vim.cmd("LspStart")
@@ -59,7 +68,7 @@ vim.api.nvim_create_autocmd({ "FocusGained" }, {
 	end,
 })
 
-vim.api.nvim_create_autocmd({ "FocusLost" }, {
+autocmd({ "FocusLost" }, {
 	desc = "Stop LSP server if window isn't focused",
 	group = "LspTimeout",
 	callback = vim.schedule_wrap(function()
@@ -70,7 +79,12 @@ vim.api.nvim_create_autocmd({ "FocusLost" }, {
 			_G.nvimLspTimeOutStartTimer = nil
 		end
 
-		local activeServers = #vim.lsp.get_clients()
+		if not vim.fn.has("nvim-0.9") then
+			activeServers = #vim.lsp.get_clients({ bufnr = buffer })
+		else
+			activeServers = #vim.lsp.get_active_clients({ bufnr = buffer })
+		end
+
 		if not _G.nvimLspTimeOutStopTimer and activeServers > 0 then
 			local timeout = vim.g["lsp-timeout-config"].stopTimeout
 			if not type(timeout) == "number" then
