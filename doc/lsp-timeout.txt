@@ -1,4 +1,4 @@
-*lsp-timeout.txt*                               Last change: 2023 September 29
+*lsp-timeout.txt*                               Last change: 2023 September 30
 
 ==============================================================================
 Table of Contents                              *lsp-timeout-table-of-contents*
@@ -52,10 +52,9 @@ CONFIGURATION                                      *lsp-timeout-configuration*
 
 >lua
     vim.g["lsp-timeout-config"] = {
-        -- When focus is lost
-        -- wait 5 minutes before stopping all LSP servers
-        stopTimeout=1000 * 60 * 5,
-        startTimeout=1000 * 10 
+        stopTimeout =1000 * 60 * 5,  -- wait ms before stopping all LSP servers
+        startTimeout=1000 * 10,      -- ms before restart
+        silent      =false           -- true to suppress notifications
     }
 <
 September 16, 2023
