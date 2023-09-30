@@ -45,13 +45,14 @@ autocmd({ "FocusGained" }, {
 				timeout,
 				0,
 				vim.schedule_wrap(function()
+					-- Checks if it's nightly or not
 					if not vim.fn.has("nvim-0.9") then
 						activeServers = #vim.lsp.get_clients({ bufnr = buffer })
 					else
 						activeServers = #vim.lsp.get_active_clients({ bufnr = buffer })
 					end
 
-					if activeServers <= 1 then
+					if activeServers < 1 then
 						vim.notify(
 							("[[lsp-timeout.nvim]]: %s servers found, restarting... "):format(activeServers),
 							vim.log.levels.INFO
@@ -79,6 +80,7 @@ autocmd({ "FocusLost" }, {
 			_G.nvimLspTimeOutStartTimer = nil
 		end
 
+		-- Checks if it's nightly or not
 		if not vim.fn.has("nvim-0.9") then
 			activeServers = #vim.lsp.get_clients({ bufnr = buffer })
 		else
