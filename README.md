@@ -15,9 +15,9 @@
 ## Overview
 
 Some LSP servers are terribly inefficient at memory management and can
-easily take up hunders RAM MBs if let unattended (just like VS Code). This plugin prevents
-excessive memory usage by restarting automatically stopped LSP servers on demand
-keeping neovim fast. 
+easily take up gigabytes of RAM MBs if left unattended (just like VS Code huh?!). 
+This plugin prevents excessive memory usage by stopping and restarting LSP servers 
+automatically keeping neovim fast.
 
 
 ## ⚡Features
@@ -32,8 +32,6 @@ keeping neovim fast.
 
 ## 📦 Installation
 
-Use your favorite plugin manager, and then call `require("lsp-timeout.nvim").setup()`.
-
 #### [packer.nvim](https://github.com/wbthomason/packer.nvim)
 ```lua
 -- $HOME/.config/nvim/lua/user/init.lua
@@ -43,7 +41,7 @@ packer.setup(function(use)
         requires={ "neovim/nvim-lspconfig" },
         setup = function()
             vim.g["lsp-timeout-config"] = {
-                ...
+                -- ...
             }
         end
     })
