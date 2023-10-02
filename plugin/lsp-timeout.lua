@@ -77,6 +77,7 @@ vim.api.nvim_create_autocmd({"FocusLost"}, {
 			_G.nvimLspTimeOutStartTimer = nil
 		end
 
+		local NVIM_V9 = vim.fn.has("nvim-0.9")
 		local activeServers = 0
 		if not NVIM_V9 then
 			activeServers = #vim.lsp.get_clients({bufnr = options.buf})
@@ -85,7 +86,6 @@ vim.api.nvim_create_autocmd({"FocusLost"}, {
 		end
 
 		if not _G.nvimLspTimeOutStopTimer and activeServers > 0 then
-			local NVIM_V9 = vim.fn.has("nvim-0.9")
 			local timeout = vim.g["lsp-timeout-config"].stopTimeout
 			if not type(timeout) == "number" then timeout = 1000 * 60 * 5 end
 
