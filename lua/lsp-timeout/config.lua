@@ -1,8 +1,9 @@
 -- Default config
 --- Configuration class
 --- @class M.Config
+local M = {}
 M.Config = { prototype = { ctx = {}, constructor = M.Config } }
-M.Config._mt = { 
+M.Config._mt = {
 	__index = function(table, key)
 		if key == "constructor" then return M.Config end
 		return table.constructor.prototype[key]
