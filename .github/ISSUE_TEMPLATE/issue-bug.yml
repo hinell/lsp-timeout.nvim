@@ -1,31 +1,32 @@
 name: Bug Report
 description: File a bug report
-title: "New bug report"
-labels: ["untriaged"]
+title: "Bug report"
+labels: ["bug"]
 assignees:
   - hinell
-body: 
+body:
   - type: textarea
     id: issue-summary
     attributes:
       label: Summary
-      placeholder: "Be brief"
-      value: "."
+      placeholder: "Be brief, time is invaluable commodity that only few can afford"
     validations:
       required: true
   - type: textarea
     id: issue-repro
     attributes:
       label: Steps to reproduce
-      placeholder: Snippet of code 
-      value: "."
+      placeholder: Specify how to reproduce issue if there are any ways
     validations:
       required: false
   - type: textarea
     id: issue-env
     attributes:
       label: Versions
-      placeholder: "Specify all relevant VERSIONS"
-      value: "."
+      placeholder: |
+        Specify all relevant VERSIONS and commits, e.g.:
+        NVIM v0.10.0-dev-ac1c23442f
+        Build type: MinSizeRel
+        LuaJIT 2.1.0-beta3
     validations:
       required: false

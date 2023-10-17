@@ -8,9 +8,10 @@ doc/tags: doc/$(PROJECT_NAME).txt
 	@$(NVIM) --headless -c "helptags doc/" -c "exit"
 
 # ts-vimdoc generate vimhelp from markdown 
+.SILENT:
 .ONESHELL:
 doc/$(PROJECT_NAME).txt: doc/index.md
-	@$(NVIM) --headless -E -c "
+	$(NVIM) --headless -E -c "
 		lua require('ts-vimdoc').docgen({
 			input_file='doc/index.md',
 			output_file = '$@',
@@ -25,4 +26,5 @@ doc/$(PROJECT_NAME).txt: doc/index.md
 		> /dev/stderr;
 	}
 	test -f $< && unicode-emoji-remove.sh -i $@
-	sed -E -i -e 's/<\/br>\s*/\n/' $@
+	# strip <br> tags
+	sed -i -E -e 's/<\/?br\/?>\s*/\n/g' $@ 

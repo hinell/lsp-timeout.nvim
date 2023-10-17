@@ -1,0 +1,11 @@
+* chore(lua-lsp): fix config
+* docs(*): major update
+* feat(lsp-timeout): support for multi-tab mode
+* refactor(config): reformat; allow nil values for config
+* feat(napi): add cross-runtime functions
+* docs(*): update CONTRIBUTING.md DEVELOPMENT.md
+* refactor(github): update github templates
+* docs(*): note on LspInfo
+* refactor(Makefile): Use .SILENT
+* refactor(autocmds): refactor autocmds description
+* fix(#10): no config added

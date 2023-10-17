@@ -8,13 +8,22 @@ This project is developed by using various developer tools. For runtime dependen
 
 [Neovim]: https://github.com/neovim/neovim
 
-> _See also: .md files in \`src/\` folder._ 
-## GIT WORKFLOW
-It's highly likely that this project is going to be
-[force-pushed](https://git-scm.com/docs/git-push#Documentation/git-push.txt)
-and aggressively [squash-rebased](https://git-scm.com/docs/git-rebase) into specific semver versions.
-Take into account this fact when making a PR: it is likely render your
-base-commits obsolete.
+## GIT WORKLOW & CONVENTIONS
+* This project's history is going to be aggressively [force-pushed](https://git-scm.com/docs/git-push#Documentation/git-push.txt) and [squash-rebased](https://git-scm.com/docs/git-rebase) into a specific [semver] versions
+* The said versions might be later revised, dropped or removed (unless specific package manager doesn't allow version replacement).
+* This implies that any [upstream] commits pulled may become obsolete
+
+#### Tags naming conventions:
+* `latest` - latest released version
+* `vX.Y.Z`  - version, per [semver]
+* `nighlty` - testing build
+
+#### Branch naming convention
+* `main` - main dev branch
+* `release/X.Y.Z` - next release; tightly coupled to `main`
+
+[semver]: https://github.com/semver/semver 'Semantic version'
+[upstream]: https://docs.github.com/en/get-started/quickstart/github-glossary#upstream 'Gighub glossary: upstream'
 
 ## BUILD
 ### Dev dependencies

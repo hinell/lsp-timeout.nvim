@@ -3,8 +3,9 @@
 <div align="center">
   <h1 align="center">🔌  lsp-timeout.nvim</h2>
 </div>
-<img width="100%" src="doc/preview.png" />
 
+<!-- <img width="100%" src="doc/preview.png" /> -->
+https://github.com/hinell/lsp-timeout.nvim/assets/8136158/92e30089-192f-4c75-8bec-85ca36a2c06c
 
 <!-- Use badges from https://shields.io/badges/ -->
 [![PayPal](https://img.shields.io/badge/-PayPal-880088?style=flat-square&logo=pay&logoColor=white&label=DONATE)](https://www.paypal.me/biteofpie)
