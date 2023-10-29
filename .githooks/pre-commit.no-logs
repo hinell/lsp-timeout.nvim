@@ -1,0 +1,49 @@
+#!/usr/bin/env -S bash
+# File........: pre-commit.check-logs
+# Summary.....: Abort committing if logging expressions are found in source files
+# Created.....: December 07, 2023
+# Authors.....: Alex A. Davronov <al.neodim@gmail.com> (2023-)
+# Usage.......: Import by using `source` (or `.`) in a shellscript:
+# source "\$(dirname \${0})/pre-commit.no-logs"
+# # JavaScript
+# no_logs '^[[:space:]]*console.log\(.*'
+# no_logs '^[[:space:]]*debug' src/**/*.{js,ts}
+# # C/C++
+# no_logs '^[[:space:]]*printf\(?.*' src/**/*.cc
+# no_logs '^[[:space:]]*(std)?::cout[[:space:]]*<<.*' src/**/*.cc
+# # Lua
+# no_logs '^[[:space:]]*print\(?.*vim.inspect\(?.*' lua/**/*.lua
+# # Shell
+# no_logs '^[[:space:]]*declare\s*-p\s*.*' **/*.{sh,zsh,bash}
+
+## Returns non-zero if specified files contain given string
+## @param check_string
+## @param  ... files
+no_logs(){
+	local _CTX="pre-commit.no-logs"
+	local _REG=${1:? string (.e.g "console.log") is required}
+	shift
+
+	local _FILES=()
+	local  _GIT_FILES=($(git di --staged --name-only --diff-filter=CRAM))
+	# only pickup what was staged so for
+	for file in ${@}; do
+		for file_staged in ${_GIT_FILES[@]};
+		do
+			[[ "${file}" =~ "${file_staged}" ]] && _FILES+=("$file")
+		done
+	done
+	(( ${#_FILES[@]} == 0 )) && { return 0; };
+	local _GRP=$(grep --color=always -n -s -E "${_REG}" ${_FILES[@]} )
+	# printf "${_CTX} checking for ${_REG}... "
+	if [[ -n ${_GRP} ]] ;
+	then
+		printf "\n${_GRP}\n"
+		printf "${_CTX}:$(tput setaf 1)error$(tput sgr0): ${_REG} - logs are likely not needed. Aborting.\n" >&2 ;
+		exit 1
+	# else
+	# 	printf "\n${0}:$(tput setaf 2) ok ✔$(tput sgr0)\n"
+	fi
+}
+
+# ex: ft=bash

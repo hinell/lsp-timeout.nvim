@@ -1,4 +1,3 @@
-describe("lsp-timeout", function()
   describe("Config class", function()
 	local Config = require("lsp-timeout.config").Config
 
@@ -36,12 +35,10 @@ describe("lsp-timeout", function()
 	end)
 
 
-   --  it("have static tableOfStrings method to check for ", function()
-   --    local Config = require("lsp-timeout.config").Config
-	  -- assert.is_function(Config.tableOfStrings)
-   --  end)
+    it("have static tableOfStrings method to check for ", function()
+      local Config = require("lsp-timeout.config").Config
+	  assert.is_function(Config.tableOfStrings)
+
+    end)
 
   end)
-end)
- 
-

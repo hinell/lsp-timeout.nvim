@@ -1,0 +1,17 @@
+# ex: ft=bash
+# AUTOGENARTED BY SCAFFOLD TOOLSET
+SC_VERSION=1.1.1
+CREATED_AT="Mon, 23 Oct 2023 12:50:27 +0300"
+UPDATED_AT="Thu, 26 Oct 2023 08:49:17 +0300"
+DOC_PROJECT_NAME="lsp-timeout.nvim"
+DOC_PROJECT_SUMMARY="Nvim plugin for nvim-lspconfig: stop idle servers & restart upon gaining or loosing focus;keeps your RAM usage low;"
+DOC_LICENSE_TYPE="Free and Open Source Software [International] License (FOSSIL) v1.0.2"
+NVIM_PLUGIN_MODULE_NAME="lsp-timeout"
+GIT_REPO_URL_USER="git"
+GIT_REPO_URL_HOST="github.com"
+GIT_REPO_URL_PATH="hinell/lsp-timeout.nvim"
+GIT_REPO_URL_SCP="git@github.com:hinell/lsp-timeout.nvim.git"
+GIT_HOOKS_FOLDER=".githooks"
+LICENSE_PATH="/home/alex/.local/share/scaffold/templates/license/fossil-v1.0.2.txt.in"
+GIT_USERNAME="hinell"
+GIT_USEREMAIL="al.neodim@gmail.com"

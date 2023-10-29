@@ -8,7 +8,8 @@
 *.mp3 binary diff=
 *.mp4 binary diff=
 *.mov binary diff=
+*.ogv binary diff=
+*.mkv binary diff=
 *.xcf binary diff=
 *.zip binary diff=
 *.tar.gz binary diff=
-

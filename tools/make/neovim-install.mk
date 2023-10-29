@@ -11,16 +11,17 @@
 # SOFTWARE.
 
 
-# Install neovim binaries by version 
+# Install neovim binaries by version
 # usage:
-# include make/neovim-install.mk
+#   NEOVIM_VERSIONS=nightly v0.9.2
+# 	include make/neovim-install.mk
 #	test-%:	$(HOME)/.neovim/%/bin/nvim | $(HOME)/.neovim/ $(HOME)/.local/share/nvim/lazy/plenary.nvim
 #		VIM="$${HOME}/.neovim/$(*)/share/nvim/runtime" $(HOME)/.neovim/$(*)/bin/nvim --headless --noplugin \
 #		-c "lua print('neovim version: $(*)')"
-#		
+#
 
 ifeq ($(NEOVIM_VERSIONS),)
-	$(error "neovim versions are required")
+$(error "nvim-install: neovim versions are required")
 endif
 
 # Use globally available folder for neovim

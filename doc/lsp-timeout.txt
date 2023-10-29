@@ -1,4 +1,4 @@
-*lsp-timeout.txt*                                 Last change: 2023 October 29
+*lsp-timeout.txt*                                Last change: 2023 December 24
 
 ==============================================================================
 Table of Contents                              *lsp-timeout-table-of-contents*
@@ -6,7 +6,7 @@ Table of Contents                              *lsp-timeout-table-of-contents*
 INSTALL ................................................ |lsp-timeout-install|
 UPDATE .................................................. |lsp-timeout-update|
 CONFIGURATION .................................... |lsp-timeout-configuration|
-Augroups .............................................. |lsp-timeout-augroups|
+AUGROUPS .............................................. |lsp-timeout-augroups|
 TROUBLESHOOTING ................................ |lsp-timeout-troubleshooting|
 TROUBLESHOOTING PLUGINS ................ |lsp-timeout-troubleshooting-plugins|
 
@@ -20,6 +20,7 @@ focus; keeps RAM usage low
 **Default behavior**:
 
 * Tabpages and windows inside - are traversed & checked for LSPs
+* When window loses focus - forcibly stops LSP servers
 * The |'diff'| windows and |'readonly'| buffers are ignored - `lsp-timeout`
   takes no action
 * On focused writable windows (cursor put on) `lsp-timeout` finds and restarts
@@ -35,7 +36,7 @@ to use`latest` tag
 >
     "hinell/lsp-timeout.nvim"
 <
-Requirements:
+REQUIREMENTS:
 
 * Neovim v0.7.2+
 * nvim-lspconfig: https://github.com/neovim/nvim-lspconfig
@@ -43,7 +44,8 @@ Requirements:
     {
         "hinell/lsp-timeout.nvim",
         dependencies={ "neovim/nvim-lspconfig" },
-        init = function()
+        init = function(opts)
+            vim.g.lspTimeoutLoaded = false -- disable plugin entirely upon startup 
             vim.g.lspTimeoutConfig = {
             -- see config below
             }
@@ -62,8 +64,9 @@ Packer:
           "hinell/lsp-timeout.nvim",
           requires={ "neovim/nvim-lspconfig" },
           setup = function()
+            vim.g.lspTimeoutLoaded = false
             vim.g.lspTimeoutConfig = {
-            -- see config belos 
+            -- see config below
             }
           end
         })
@@ -87,7 +90,7 @@ CONFIGURATION                                      *lsp-timeout-configuration*
     vim.g.lspTimeoutConfig = {
         stopTimeout  = 1000 * 60 * 5, -- ms, timeout before stopping all LSPs 
         startTimeout = 1000 * 10,     -- ms, timeout before restart
-        silent       = false          -- true to suppress notifications
+        silent       = false,         -- true to suppress notifications
         filetypes    = {
             ignore = {                -- filetypes to ignore; empty by default
                                       -- lsp-timeout is disabled completely
@@ -121,7 +124,9 @@ TROUBLESHOOTING                                  *lsp-timeout-troubleshooting*
   **Note** IF SOME PLUGIN FAILED BECAUSE OF STOPPED LSP, PLEASE, FILL AN ISSUE
   IN A RESPECTIVE PLUGIN REPO
 
+* Run `checkhealth lsp-timeout` and report Errors / Warnings
 * Run `LspInfo` to find (in)active LSPs
+* Make sure that `set ft=` is not empty; nothing will be restarted otherwise
 * Use `map <...>` to check what keymaps are setup/lost upon restart
 * If you hook into |LspAttach| and |LspDetach| events, make sure to store &
   clean up buffer-local variables or keymaps only once per every cycle
