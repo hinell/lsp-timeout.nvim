@@ -1,10 +1,17 @@
-name: Bug Report
+name: Bug
 description: File a bug report
 title: "Bug report"
 labels: ["bug"]
 assignees:
   - hinell
 body:
+  - type: checkboxes
+    id: issue-trouble-is-read
+    attributes:
+      label: I've read TROUBLESHOOTING instructions
+      options:
+        - label: "Yes"
+          required: true
   - type: textarea
     id: issue-summary
     attributes:
@@ -30,3 +37,20 @@ body:
         LuaJIT 2.1.0-beta3
     validations:
       required: false
+  - type: dropdown
+    id: OS
+    attributes:
+      label: Specify operating system/environment
+      options:
+        - Linux/Debian/Ubuntu
+        - Linux/Debian/Kubuntu
+        - Linux / Other
+        - Archlinux
+        - NixOS
+        - MacOS
+        - Windows
+        - Windows WSL
+        - Docker
+        - Other
+    validations:
+      required: true

@@ -1,7 +1,7 @@
 <!---->
 
 <div align="center">
-  <h1 align="center">🔌  lsp-timeout.nvim</h2>
+  <h1 align="center">lsp-timeout.nvim<img width="32" src="https://neovim.io/logos/neovim-mark-flat.png" align="right" /></h1>
 </div>
 
 <!-- <img width="100%" src="doc/preview.png" /> -->
@@ -33,22 +33,6 @@ automatically upon gaining or loosing window focus, keeping neovim fast.
 
 ## 📦 Installation
 
-#### [packer.nvim](https://github.com/wbthomason/packer.nvim)
-```lua
--- $HOME/.config/nvim/lua/user/init.lua
-packer.setup(function(use)
-    use({
-         "hinell/lsp-timeout.nvim",
-        requires={ "neovim/nvim-lspconfig" },
-        setup = function()
-            vim.g["lsp-timeout-config"] = {
-                -- ...
-            }
-        end
-    })
-end)
-```
-
 #### [lazy.vim](https://github.com/folke/lazy.nvim)
 ```lua
 require("lazy").setup(
@@ -57,6 +41,17 @@ require("lazy").setup(
 	dependencies={ "neovim/nvim-lspconfig" }
     }
 )
+```
+
+#### [packer.nvim](https://github.com/wbthomason/packer.nvim)
+```lua
+-- $HOME/.config/nvim/lua/user/init.lua
+packer.setup(function(use)
+    use({
+        "hinell/lsp-timeout.nvim",
+        requires={ "neovim/nvim-lspconfig" }
+    })
+end)
 ```
 
 #### [vim-plug](https://github.com/junegunn/vim-plug)

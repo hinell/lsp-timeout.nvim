@@ -1,6 +1,6 @@
 # https://docs.github.com/en/communities/using-templates-to-encourage-useful-issues-and-pull-requests/syntax-for-githubs-form-schema
-name: Feature request
-description: "Feature requests aren't expected, but you can try"
+name: Feature
+description: "File a feature request; they are aren't expected, but you can try"
 labels: ["enhancement"]
 assignees:
   - hinell

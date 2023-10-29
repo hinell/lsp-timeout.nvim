@@ -18,7 +18,7 @@ M.Config._mt = {
 --- @tparam  Table containing area
 function M.Config:new(config)
 	if type(config) ~= "table" then
-		error(("%s: table is expected"):format(debug.getinfo(1).source))
+		error(("table is expected"):format(debug.getinfo(1).source), 2)
 		return
 	end
 	local instance = config or {}
@@ -27,15 +27,68 @@ function M.Config:new(config)
 	return instance
 end
 
+--- Checks if a table contains a list of strings; false if empt
+--- @param table table|nil
+--- @return boolean
+M.Config.tableOfStrings = function(table)
+	local tableIsList  = type(table) == "table" and vim.tbl_islist(table)
+	if tableIsList then
+		local value = nil 
+		for i = 1, #table do
+			value = table[i]
+			if type(value) ~= "string" then
+				return false
+			end
+		end
+		return true
+	else
+		return false
+	end
+end
+
 --- Validate config
 --- @treturn {M.Config}
 function M.Config.prototype:validate()
-	-- LuaFormatter off
-	vim.validate {
-		stopTimeout  = { self.stopTimeout , "number" , true },
-		startTimeout = { self.startTimeout, "number" , true },
-		silent       = { self.silent      , "boolean", true }
-	}
+
+	-- LuaFormatter of
+	if not ((self.stopTimeout == nil) or type(self.stopTimeout) == "number") then
+		error("lsp-timeout.config.stopTimeout: number is expected, got "
+		.. type(self.stopTimeout), 2)
+	end
+
+	if not (self.startTimeout == nil or type(self.startTimeout) == "number") then
+		error("lsp-timeout.config.startTimeout: number is expected, got "
+		.. type(self.stopTimeout), 2)
+	end
+
+	if not (self.silent == nil or type(self.silent) == "boolean") then
+		error("lsp-timeout.config.silent: boolean is expected, got "
+		.. type(self.stopTimeout), 2)
+	end
+
+	if self.filetypes ~= nil then
+		if (vim.tbl_isarray(self.filetypes) and not vim.tbl_isempty(self.filetypes))
+		or not self.filetypes.ignore then
+			error("lsp-timeout.config.filetypes: { ignore = { .. } } is expected, got "
+			.. vim.inspect(self.filetypes), 2)
+		end
+	end
+
+	if self.filetypes ~= nil then
+		if type(self.filetypes) ~= "table" then
+			error("lsp-timeout.config.filetypes: table is expected, got "
+			.. type(self.filetypes), 2)
+		else
+			if  self.filetypes.ignore ~= nil
+				and not vim.tbl_isempty(self.filetypes.ignore)
+				and not self.constructor.tableOfStrings(self.filetypes.ignore)
+			then
+				error("lsp-timeout.config.filetypes.ignore: table of strings is expected, got "
+				.. vim.inspect(self.filetypes.ignore), 2)
+			end
+		end
+	end
+
 	return self
 	-- LuaFormatter on
 end
@@ -50,11 +103,13 @@ end
 
 -- LuaFormatter off
 local config = {}
-	  config.stopTimeout  = 1000 * 60 * 5
-	  config.startTimeout = 1000 * 10
-	  config.silet        = false
+	  config.stopTimeout      = 1000 * 60 * 5
+	  config.startTimeout     = 1000 * 10
+	  config.silent           = false
+	  config.filetypes        = {}
+	  config.filetypes.ignore = {}
 -- LuaFormatter on
 
-M.default = M.Config:new(config)
+M.default = M.Config:new(config):validate()
 
 return M

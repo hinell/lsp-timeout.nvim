@@ -105,9 +105,12 @@ end
 
 --- Stop list of currently held clients 
 --- @treturn nil
-function M.Lsp.Clients.prototype:stop ()
+function M.Lsp.Clients.prototype:stop (force, rpcTerminate)
 	for _, client in ipairs(self) do
-		client:stop()
+		client.stop(force)
+		if rpcTerminate then
+			client.rpc.terminate()
+		end
 	end
 end
 

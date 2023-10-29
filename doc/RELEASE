@@ -1,11 +1,14 @@
-* chore(lua-lsp): fix config
-* docs(*): major update
-* feat(lsp-timeout): support for multi-tab mode
-* refactor(config): reformat; allow nil values for config
-* feat(napi): add cross-runtime functions
-* docs(*): update CONTRIBUTING.md DEVELOPMENT.md
-* refactor(github): update github templates
-* docs(*): note on LspInfo
-* refactor(Makefile): Use .SILENT
-* refactor(autocmds): refactor autocmds description
-* fix(#10): no config added
+* refactor(plugin): better error message
+* feat(plugin): disable lsp-timeout for ignored filetypes
+* feat(config): support filetypes.ignore list; Fixes #10
+* feat(plugin): deprecate ["lsp-timeout-config"] for lspTimeoutConfig
+* feat(plugin): keep track of stopped clients; restart by native lsp
+  funnctions; honor non-lspconfig servers (e.g. null-ls or none-ls)
+  previously stopped; force clients to stop & detach; Fixes #13
+* docs(readme): nvim icons
+* docs(*): remove preview.png
+* docs(CONTRIBUTING): fix typo, reword
+* docs(*): note on typescript-tools
+* docs(*): fix typos; reword
+* chore(github): add more fields to issue-bug.yml
+* docs(*): typo fixes

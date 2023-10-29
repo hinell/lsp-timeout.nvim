@@ -4,13 +4,10 @@ local autocmd = vim.api.nvim_create_autocmd
 local auclear = vim.api.nvim_clear_autocmds
 
 -- If this blocks throws an error, you have misconfigured your lsp-timeout
-if vim.g["lsp-timeout-config"] then
-	local Config = require("lsp-timeout.config").Config
-	Config:new(vim.g["lsp-timeout-config"]):validate()
-end
-
 local auLSTO   = augroup("LSPTimeout"           , {clear = true})
 local auLSTOBL = augroup("LSPTimeoutBufferLocal", {clear = true})
+ 
+_G.lspTimeOutState = _G.lspTimeOutState or { b = {} } 
 
 autocmd({"VimEnter"}, {
 	desc = "Check if nvim-lspconfig commands are available",
@@ -26,9 +23,9 @@ autocmd({"VimEnter"}, {
 		local lspconfigNoStartCmd = vim.fn.exists(":LspStart") == 0
 		local lspconfigNoStoptCmd = vim.fn.exists(":LspStop")  == 0
 		if  lspconfigNoStartCmd or lspconfigNoStoptCmd then
-			local message =
-				"no LspStart command is found. Make sure lsp-config.nvim is installed"
-			error(("%s: %s"):format(debug.getinfo(1).source, message))
+			local message = "LspStart or LspStop commands are NOT found."
+			.. "Make sure lsp-config.nvim is installed"
+			vim.notify(message, vim.log.levels.ERROR)
 			lspconfigFailed = true
 		end
 
@@ -42,8 +39,24 @@ autocmd({"VimEnter"}, {
 		if lspconfigFailed then
 			auclear({ group = auLSTO })
 			auclear({ group = auLSTOBL })
+			return
 		end
+		
 
+		-- CONTINUE: [October 29, 2023] warn users about  
+		local userConfig = vim.g["lsp-timeout-config"] or vim.g.lspTimeoutConfig
+		if userConfig then
+			local Config = require("lsp-timeout.config").Config
+			Config:new(userConfig):validate()
+		end
+		if vim.g["lsp-timeout-config"] then
+			vim.deprecate(
+			"vim.g[\"lsp-timeout-config\"]",
+			"vim.g.lspTimeoutConfig",
+			"v1.3.0",
+			"lsp-timeout.nvim",
+			false)
+		end
 	end
 })
 
@@ -52,52 +65,79 @@ autocmd({"FocusGained"}, {
 	group = auLSTO,
 	callback = function(fgAuEvent)
 
-		local lspPostponeStartup = function(auEvent, clientsToRun)
+		local lspPostponeStartup = function(auEvent, clientsAvailable)
 			-- Clear up lsp stop timer
-			if _G.nvimLspTimeOutStopTimer then
-				_G.nvimLspTimeOutStopTimer:stop()
-				_G.nvimLspTimeOutStopTimer:close()
-				_G.nvimLspTimeOutStopTimer = nil
+			if _G.lspTimeOutState.stopTimer then
+				_G.lspTimeOutState.stopTimer:stop()
+				_G.lspTimeOutState.stopTimer:close()
+				_G.lspTimeOutState.stopTimer = nil
+			end
+
+			local configDefault = require("lsp-timeout.config").default
+			local config = configDefault:extend(vim.b[auEvent.buf].lspTimeoutConfig or vim.g["lsp-timeout-config"] or vim.g.lspTimeoutConfig or {})
+			if vim.tbl_contains(config.filetypes.ignore, vim.bo[auEvent.buf].filetype) then
+				return
 			end
 
 			-- LuaFormatter off
-			local Lsp             = require("lsp-timeout.nvim-api").Lsp
-			local clientsAttached = Lsp:clients({ buf = auEvent.buf })
-			local clientsNum      = #(clientsAttached)
+			local napi            = require("lsp-timeout.nvim-api") 
+			local clientsRunning  = napi.Lsp:clients({ buf = auEvent.buf })
+			_G.lspTimeOutState.b[auEvent.buf] = _G.lspTimeOutState.b[auEvent.buf] or {}
+			local clientsStopped  = _G.lspTimeOutState.b[auEvent.buf].stopped_clients or {}
+			local clientsLspConfig = {}
+			local clientsOthers   = {}
 			-- LuaFormatter on
+			if #clientsStopped == 0 then
+				clientsLspConfig = clientsAvailable
+			else
+				for i, clientStopped in ipairs(clientsStopped) do
+					local lspClientToRun = nil 
+					for j, lspConfigClient in ipairs(clientsAvailable) do
+						if clientStopped.name == lspConfigClient.name
+						then
+							lspClientToRun = lspConfigClient
+							break
+						end
+					end
 
-			if not _G.nvimLspTimeOutStartTimer and clientsNum == 0 then
-				-- Checks if it's nightly or not
-				local configDefault = require("lsp-timeout.config").default
-				local config = configDefault:extend(vim.g["lsp-timeout-config"] or {})
+					if lspClientToRun ~= nil then
+						table.insert(clientsLspConfig, lspClientToRun)
+					else
+						table.insert(clientsOthers, clientStopped)
+					end
+				end
+			end
+			
+			if not _G.lspTimeOutState.startTimer and #clientsRunning < (#clientsLspConfig + #clientsOthers) then
 				-- Postpone startup
 				local timeout = config.startTimeout
 
 				-- ref: https://github.com/neovim/neovim/pull/22846
-				_G.nvimLspTimeOutStartTimer = uv.new_timer()
-				_G.nvimLspTimeOutStartTimer:start(timeout, 0, vim.schedule_wrap(function()
-					if clientsNum < 1 then
-						if not config.silent then
-							-- LuaFormatter off
-							vim
-							.notify(
-							"lsp-timeout: " .. #clientsToRun
-							.. " inactive LSPs found, restarting... "
-							, vim.log.levels.INFO)
-							-- LuaFormatter on
-						end
-
-						-- vim.cmd("LspStart")
-						for _, client in ipairs(clientsToRun) do
-							client.launch()
-						end
-
+				_G.lspTimeOutState.startTimer = uv.new_timer()
+				_G.lspTimeOutState.startTimer:start(timeout, 0, vim.schedule_wrap(function()
+					if not config.silent then
+						-- LuaFormatter off
+						vim
+						.notify(
+						"lsp-timeout: " .. #clientsLspConfig + #clientsOthers
+						.. " inactive LSPs found, restarting... "
+						, vim.log.levels.INFO)
+						-- LuaFormatter on
 					end
 
-					if _G.nvimLspTimeOutStartTimer then
-						_G.nvimLspTimeOutStartTimer:stop()
-						_G.nvimLspTimeOutStartTimer:close()
-						_G.nvimLspTimeOutStartTimer = nil
+					for _, client in ipairs(clientsLspConfig) do
+						client.launch()
+					end
+					for _, client in ipairs(clientsOthers) do
+						vim.lsp.start(client.config)
+					end
+
+					_G.lspTimeOutState.b[auEvent.buf].stopped_clients = {}
+
+					if _G.lspTimeOutState.startTimer then
+						_G.lspTimeOutState.startTimer:stop()
+						_G.lspTimeOutState.startTimer:close()
+						_G.lspTimeOutState.startTimer = nil
 					end
 
 				end))
@@ -128,9 +168,9 @@ autocmd({"FocusGained"}, {
 
 			-- Startup a FocusGained buffer found in current tab
 			if bufferHandle == fgAuEvent.buf then 
-				local clientsToRun = lspcfgUtil.get_config_by_ft(bufType)
-				if #clientsToRun > 0 then
-					lspPostponeStartup(fgAuEvent, clientsToRun)
+				local clientsAvailable = lspcfgUtil.get_config_by_ft(bufType)
+				if #clientsAvailable > 0 then
+					lspPostponeStartup(fgAuEvent, clientsAvailable)
 				end
 				goto loop_tpb_end
 			end
@@ -145,8 +185,8 @@ autocmd({"FocusGained"}, {
 				callback = function(auEvent)
 					
 					local lspcfgUtil = require("lspconfig.util")
-					local clientsToRun = lspcfgUtil.get_config_by_ft(vim.bo.filetype)
-					if #clientsToRun > 0 then lspPostponeStartup(auEvent, clientsToRun) end
+					local clientsAvailable = lspcfgUtil.get_config_by_ft(vim.bo.filetype)
+					if #clientsAvailable > 0 then lspPostponeStartup(auEvent, clientsAvailable) end
 					-- clean up the rest of buffer-local event listeners
 					auclear({ group = auLSTOBL })
 				end,
@@ -164,29 +204,38 @@ autocmd({"FocusLost"}, {
 	group = auLSTO,
 	callback = function(auEvent)
 		-- Clear up lsp start timer
-		if _G.nvimLspTimeOutStartTimer then
-			_G.nvimLspTimeOutStartTimer:stop()
-			_G.nvimLspTimeOutStartTimer:close()
-			_G.nvimLspTimeOutStartTimer = nil
+		if _G.lspTimeOutState.startTimer then
+			_G.lspTimeOutState.startTimer:stop()
+			_G.lspTimeOutState.startTimer:close()
+			_G.lspTimeOutState.startTimer = nil
 		end
 
 		-- LuaFormatter on
 		local napi           = require("lsp-timeout.nvim-api")
-		local clients        = napi.Lsp.Clients:new(napi.tabs.current.lsp:clients())
-		local clientsNum     = #clients
+		local clientsRunning = napi.Lsp.Clients:new(napi.tabs.current.lsp:clients())
+		_G.lspTimeOutState.b[auEvent.buf] = {}
+		_G.lspTimeOutState.b[auEvent.buf].stopped_clients = clientsRunning
+		local clientsNum     = #clientsRunning
 		local tabPageWindows = vim.api.nvim_tabpage_list_wins(0)
 		-- LuaFormatter off
 		
 	
-		if not _G.nvimLspTimeOutStopTimer and clientsNum > 0 then
+		if not _G.lspTimeOutState.stopTimer and clientsNum > 0 then
 			local configDefault = require("lsp-timeout.config").default
-			local config = configDefault:extend(vim.g["lsp-timeout-config"] or {})
+			local config = configDefault:extend(vim.b[auEvent.buf].lspTimeoutConfig or vim.g["lsp-timeout-config"] or vim.g.lspTimeoutConfig or {})
+			if vim.tbl_contains(config.filetypes.ignore, vim.bo[auEvent.buf].filetype) then
+				return
+			end
 			local timeout = config.stopTimeout
 
-			_G.nvimLspTimeOutStopTimer = uv.new_timer()
-			_G.nvimLspTimeOutStopTimer:start(timeout, 0, vim.schedule_wrap(function()
-				-- vim.cmd("LspStop")
-				clients:stop() 
+			_G.lspTimeOutState.stopTimer = uv.new_timer()
+			_G.lspTimeOutState.stopTimer:start(timeout, 0, vim.schedule_wrap(function()
+				
+				-- Stop all clients 
+				clientsRunning:stop(true)
+				for i, clientRunning in ipairs(clientsRunning) do
+					vim.lsp.buf_detach_client(auEvent.buf, clientRunning.id)
+				end
 				if not config.silent then
 					-- LuaFormatter off
 					local messageOnWindows = #tabPageWindows > 1
@@ -197,7 +246,7 @@ autocmd({"FocusLost"}, {
 					:format(clientsNum, messageOnWindows), vim.log.levels.INFO)
 					-- LuaFormatter on
 				end
-				_G.nvimLspTimeOutStopTimer = nil
+				_G.lspTimeOutState.stopTimer = nil
 			end))
 		end
 	end

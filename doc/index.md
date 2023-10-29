@@ -1,4 +1,4 @@
-## OVERVIEW
+# OVERVIEW
 
 Nvim plugin for nvim-lspconfig: stop idle servers & restart upon gaining focus;
 keeps RAM usage low
@@ -15,21 +15,18 @@ Use your favorite package manager (Packer, Plug, Lazy.nvim etc.); it's advised t
 "hinell/lsp-timeout.nvim"
 ```
 
-Prerequisites:
+Requirements:
 
 * Neovim v0.7.2+
 * nvim-lspconfig: https://github.com/neovim/nvim-lspconfig
-
-
-Lazy.nvim:
 
 ```lua
 {
     "hinell/lsp-timeout.nvim",
     dependencies={ "neovim/nvim-lspconfig" },
     init = function()
-        vim.g["lsp-timeout-config"] = {
-        -- 
+        vim.g.lspTimeoutConfig = {
+        -- see config below
         }
     end
 }
@@ -47,8 +44,8 @@ packer.setup(function(use)
       "hinell/lsp-timeout.nvim",
       requires={ "neovim/nvim-lspconfig" },
       setup = function()
-        vim.g["lsp-timeout-config"] = {
-            -- 
+        vim.g.lspTimeoutConfig = {
+        -- see config belos 
         }
       end
     })
@@ -64,17 +61,28 @@ See DEVELOPMENT.md for more info.
 <!-- ## API -->
 ## CONFIGURATION
 ```lua
-vim.g["lsp-timeout-config"] = {
+vim.g.lspTimeoutConfig = {
     stopTimeout  = 1000 * 60 * 5, -- ms, timeout before stopping all LSPs 
     startTimeout = 1000 * 10,     -- ms, timeout before restart
     silent       = false          -- true to suppress notifications
+    filetypes    = {
+        ignore = {                -- filetypes to ignore; empty by default
+                                  -- lsp-timeout is disabled completely
+        }                         -- for these filetypes
+    }
+}
+
+-- Buffer local configuration; overrides global
+bufnr = vim.api.nvim_get_current_buf() 
+vim.b[bufnr].lspTimeoutConfig = {
+    -- ..
 }
 ```
 
 ```lua
--- Optionally, validate config
+-- Optionally, validate the config
 local Config = require("lsp-timeout.config").Config
-      Config:new(vim.g["lsp-timeout-config"]):validate()
+      Config:new(vim.g.lspTimeoutConfig):validate()
 ```
 
 ### Augroups
@@ -95,20 +103,20 @@ Plugin setups two augroups:
 #### TROUBLESHOOTING PLUGINS
 * Some plugins that require active LSP servers like ones used for signs may fail if they don't hook into |LspAttach| or |LspDetach| events or `vim.lsp.get_clients(...)` properly 
 * Some LSP servers may misbehave upon restart if they don't keep cache
-* Some LSP plugins may hook into serveral LSPs and fail upon restart  
+* Some LSP plugins may hook into serveral LSPs at the same time and fail upon restart
 * See also: https://github.com/neovim/nvim-lspconfig#troubleshooting
 
 Plugins that are known to misbehave:
-* **null-ls**: fails to startup, replace by `efm-languageserver` or use workaround,
-<br/>see https://github.com/hinell/lsp-timeout.nvim/issues/7#issuecomment-1764402683
+* **null-ls** and **none-ls**:
+<br/>as of v1.2.0 should work properly; if didn't, replace by `efm-languageserver` or run `:e` upon focusing or use workaround,
+<br/>see: https://github.com/hinell/lsp-timeout.nvim/issues/7#issuecomment-1764402683
 
 * **efm-languageserver**: 
 <br/>make sure that `filetypes` are specified in the setup config
 <br/>see: https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md#efm
 
-* **barbecue.nvim**: 
-<br/>**nvim-navic**:
-<br/>you have to attach `navic.nvim` to one specific LSP; avoid attaching it to generic (e.g. efmls) LSPs:
+* **barbecue.nvim** and **nvim-navic**:
+<br/>you have to attach `navic.nvim` to one specific LSP; avoid attaching it to generic ones (e.g. efmls):
 <br/>see: https://github.com/utilyre/barbecue.nvim 
 ```lua
 require("lspconfig")[serverName].setup({
@@ -119,6 +127,11 @@ require("lspconfig")[serverName].setup({
     end
   end,
 ```
+
+* **pmizio/typescript-tools.nvim**:
+<br/>run `lspconfig["typescript-tools"].setup({ filetypes = })` 
+<br/>make sure that `filetypes` are specified in the setup config
+<br/>see: https://github.com/hinell/lsp-timeout.nvim/issues/12#issuecomment-1779750062
 
 <!-- ## EXAMPLES -->
 <!-- ## KEYBINDINGS -->
