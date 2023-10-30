@@ -47,10 +47,15 @@ M.Config.tableOfStrings = function(table)
 end
 
 --- Validate config
---- @treturn {M.Config}
+--- @treturn M.Config
 function M.Config.prototype:validate()
+	-- v1.2.0
+	-- NOTE: avoid vim.tbl_isarray() as it is
+	-- incompatible with older <=0.9.2 nvim versions
+	-- ref: https://github.com/neovim/neovim/pull/16440
+	-- ref: https://github.com/hinell/lsp-timeout.nvim/pull/17
 
-	-- LuaFormatter of
+	-- LuaFormatter off
 	if not ((self.stopTimeout == nil) or type(self.stopTimeout) == "number") then
 		error("lsp-timeout.config.stopTimeout: number is expected, got "
 		.. type(self.stopTimeout), 2)
@@ -67,8 +72,9 @@ function M.Config.prototype:validate()
 	end
 
 	if self.filetypes ~= nil then
-		if (vim.tbl_isarray(self.filetypes) and not vim.tbl_isempty(self.filetypes))
-		or not self.filetypes.ignore then
+		if (vim.tbl_islist(self.filetypes)
+		and (not vim.tbl_isempty(self.filetypes)) or not self.filetypes.ignore)
+		then
 			error("lsp-timeout.config.filetypes: { ignore = { .. } } is expected, got "
 			.. vim.inspect(self.filetypes), 2)
 		end
@@ -110,6 +116,6 @@ local config = {}
 	  config.filetypes.ignore = {}
 -- LuaFormatter on
 
-M.default = M.Config:new(config):validate()
+M.default = M.Config:new(config)
 
 return M
