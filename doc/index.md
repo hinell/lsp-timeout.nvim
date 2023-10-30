@@ -45,7 +45,7 @@ packer.setup(function(use)
       requires={ "neovim/nvim-lspconfig" },
       setup = function()
         vim.g.lspTimeoutConfig = {
-        -- see config belos 
+        -- see config below
         }
       end
     })
