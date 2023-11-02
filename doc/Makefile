@@ -1,20 +1,20 @@
-# This file is intended to be included by root project Makefile!
-
-.PHONY:
-doc/tags: doc/$(PROJECT_NAME).txt
-	@$(NVIM) --headless -c "helptags doc/" -c "exit"
+# This file is intended to be called by meta Make file 
+export NVIM ?=nvim 
+export PROJECT_NAME ?=lsp-timeout
 
 # ts-vimdoc generate vimhelp from markdown 
-.SILENT:
 .ONESHELL:
-doc/$(PROJECT_NAME).txt: doc/index.md
+%.txt: %.md
+	echo "WTF?"
+	pwd
+	PROJECT_NAME="$(@)"
 	$(NVIM) --headless -E -c "
 		lua require('ts-vimdoc').docgen({
-			input_file='doc/index.md',
+			input_file='$<',
 			output_file = '$@',
-			project_name='$(PROJECT_NAME)',
+			project_name=\"$${PROJECT_NAME%%.txt}\",
 		})
-		os.exit()
+		os.exit(0)
 	"
 	command -v unicode-emoji-remove.sh &> /dev/null || {
 		# Use 2> error.log to read the output of the command 
@@ -22,14 +22,17 @@ doc/$(PROJECT_NAME).txt: doc/index.md
 				"https://github.com/hinell/dotfiles/blob/main/bash-scripts/unicode-emoji-remove.sh" \
 		> /dev/stderr;
 	}
-	test -f $< && unicode-emoji-remove.sh -i $@
+	test -f "$<" && unicode-emoji-remove.sh -i $@
 	# strip <br> tags
 	sed -i -E -e 's/<\/?br\/?>\s*/\n/g' $@
 
-.PHONY: doc-clean
 .ONESHELL:
-doc-clean:
-	rm -v doc/$(PROJECT_NAME).txt doc/tags
+tags: $(PROJECT_NAME).txt
+	@$(NVIM) --headless -c "helptags ./" -c "q!"
 
-all: doc/tags
-clean: doc-clean
+.PHONY: clean
+.ONESHELL:
+clean:
+	rm -v $(PROJECT_NAME).txt ./tags
+
+all: tags
