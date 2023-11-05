@@ -1,3 +1,9 @@
+if vim.g.lspTimeoutLoaded then
+	return
+end
+
+vim.g.lspTimeoutLoaded=true
+
 local uv = vim.uv or vim.loop
 local augroup = vim.api.nvim_create_augroup
 local autocmd = vim.api.nvim_create_autocmd

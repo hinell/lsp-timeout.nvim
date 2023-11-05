@@ -24,7 +24,8 @@ Requirements:
 {
     "hinell/lsp-timeout.nvim",
     dependencies={ "neovim/nvim-lspconfig" },
-    init = function()
+    init = function(opts)
+        vim.g.lspTimeoutLoaded = false -- disable plugin entirely upon startup 
         vim.g.lspTimeoutConfig = {
         -- see config below
         }
@@ -44,6 +45,7 @@ packer.setup(function(use)
       "hinell/lsp-timeout.nvim",
       requires={ "neovim/nvim-lspconfig" },
       setup = function()
+        vim.g.lspTimeoutLoaded = false
         vim.g.lspTimeoutConfig = {
         -- see config below
         }
@@ -97,6 +99,7 @@ Plugin setups two augroups:
 > IF SOME PLUGIN FAILED BECAUSE OF STOPPED LSP, PLEASE, FILL AN ISSUE IN A RESPECTIVE PLUGIN REPO
 
 * Run `LspInfo` to find (in)active LSPs
+* Make sure that `set ft=` is not empty; nothing will be restarted otherwise
 * Use `map <...>` to check what keymaps are setup/lost upon restart 
 * If you hook into |LspAttach| and |LspDetach| events, make sure to store & clean up buffer-local variables or keymaps only once per every cycle
 
