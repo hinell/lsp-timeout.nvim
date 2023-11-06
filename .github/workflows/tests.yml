@@ -1,0 +1,24 @@
+name: dev
+on: 
+  # Trigger worfklow when branch or tags are pushed
+  push:
+    branches:
+      - dev
+  pull_request:
+    branches: [ "dev", "main" ]
+    paths:
+      - "lua/**"
+      - "plugin/**"
+      - "tests/**"
+jobs:
+  tests:
+    name: Run ALL lua tests 
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout git repository
+        uses: actions/checkout@v4
+      - name: Run tests
+        shell: bash
+        # CONTINUE: [November 01, 2023] Provide basic testing workflow 
+        run: |
+            make -sR -C tests/
