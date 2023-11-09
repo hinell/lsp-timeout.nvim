@@ -1,0 +1,31 @@
+name: dev
+on: 
+  push:
+    branches:
+      - dev
+    paths:
+      - "lua/**"
+      - "plugin/**"
+      - "tests/**"
+  pull_request:
+    branches: [ "dev", "main" ]
+    paths:
+      - "lua/**"
+      - "plugin/**"
+      - "tests/**"
+jobs:
+  tests:
+    name: Run ALL lua tests 
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout git repository
+        uses: actions/checkout@v4
+      - name: Run tests
+        shell: bash
+        run: |
+          git branch --show-current
+          # Only four versions are tested:
+          # v0.7.2 v0.8.3 v0.9.2 nightly
+          # They are setup by NEOVIM_VERSIONS
+          # Testing is done incrementally
+          make -sR tests/
