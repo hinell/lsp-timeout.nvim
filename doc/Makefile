@@ -1,38 +1,22 @@
-# This file is intended to be called by meta Make file 
-export NVIM ?=nvim 
-export PROJECT_NAME ?=lsp-timeout
+# doc/Makefile.vimdoc.in
+# doc: setup ts-vimdoc.nvim targets to generate vimhelp from markdown
+#-------------------------------------
+export NVIM ?=nvim
+export MODULE_NAME ?=lsp-timeout
 
-# ts-vimdoc generate vimhelp from markdown 
-.ONESHELL:
-%.txt: %.md
-	echo "WTF?"
-	pwd
-	PROJECT_NAME="$(@)"
-	$(NVIM) --headless -E -c "
-		lua require('ts-vimdoc').docgen({
-			input_file='$<',
-			output_file = '$@',
-			project_name=\"$${PROJECT_NAME%%.txt}\",
-		})
-		os.exit(0)
-	"
-	command -v unicode-emoji-remove.sh &> /dev/null || {
-		# Use 2> error.log to read the output of the command 
-		echo -e "$0: $(tput setaf 1)error:$(tput op) unicode-emoji-remove.sh is nout found; install it from" \
-				"https://github.com/hinell/dotfiles/blob/main/bash-scripts/unicode-emoji-remove.sh" \
-		> /dev/stderr;
-	}
-	test -f "$<" && unicode-emoji-remove.sh -i $@
-	# strip <br> tags
-	sed -i -E -e 's/<\/?br\/?>\s*/\n/g' $@
+# static rules to convert .md to .txt files for vimdoc
+include ../make/ts-vimdoc.mk
 
+# Add more files here,
+# e.g. $(MODULE_NAME)-subpage.txt - will be made out of $(MODULE_NAME)-subpage.md
 .ONESHELL:
-tags: $(PROJECT_NAME).txt
+tags: $(MODULE_NAME).txt
 	@$(NVIM) --headless -c "helptags ./" -c "q!"
 
 .PHONY: clean
 .ONESHELL:
 clean:
-	rm -v $(PROJECT_NAME).txt ./tags
+	rm -v $(MODULE_NAME).txt ./tags
 
+.PHONY: all
 all: tags

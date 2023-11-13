@@ -1,6 +1,7 @@
-export SHELL=/usr/bin/bash
+export SHELL ?=bash
+export NVIM  ?=nvim
 
-export PROJECT_NAME ?=lsp-timeout
+export MODULE_NAME ?=lsp-timeout
 export NVIM ?=nvim
 
 # Only directories
