@@ -10,7 +10,8 @@ out/
 dist/
 .dist/
 .git/
+# nvim
+.vim/
+.nvim/
 # node.js
 node_modules/
-# scaffold tooling
-.scaffoldrc
