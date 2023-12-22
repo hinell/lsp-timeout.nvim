@@ -16,9 +16,9 @@ https://github.com/hinell/lsp-timeout.nvim/assets/8136158/92e30089-192f-4c75-8be
 ## Overview
 
 Some LSP servers are terribly inefficient at memory management and can
-easily take up gigabytes of RAM MBs if left unattended (just like VS Code huh?!). 
+easily take up gigabytes of RAM if left unattended (just like VS Code huh?!). 
 This plugin prevents excessive memory usage by stopping and restarting LSP servers 
-automatically upon gaining or loosing window focus, keeping neovim fast.
+automatically upon gaining or losing window focus, keeping neovim fast.
 
 
 ## ⚡Features
