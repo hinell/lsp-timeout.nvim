@@ -1,4 +1,3 @@
-describe("lsp-timeout", function()
   describe("Config class", function()
 	local Config = require("lsp-timeout.config").Config
 
@@ -43,6 +42,3 @@ describe("lsp-timeout", function()
     end)
 
   end)
-end)
- 
-

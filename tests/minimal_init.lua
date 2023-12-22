@@ -15,8 +15,7 @@
 --			-c "PlenaryBustedDirectory tests/ { sequential = true }"
 
 local path = {}
-path.sep = "/"
-if vim.fn.has("win32") == 1 then path.sep = "\\" end
+path.sep = package.config:sub(1, 1)
 
 -- We do not search for plenary path over here
 -- and rely entirely on upstream use of this module
