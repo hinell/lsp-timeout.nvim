@@ -5,6 +5,7 @@ keeps RAM usage low
 
 **Default behavior**:
 * Tabpages and windows inside - are traversed & checked for LSPs
+* When window loses focus - forcibly stops LSP servers
 * The |'diff'| windows and |'readonly'| buffers are ignored - `lsp-timeout` takes no action
 * On focused writable windows (cursor put on) `lsp-timeout` finds and restarts available LSPs 
 
@@ -15,7 +16,7 @@ Use your favorite package manager (Packer, Plug, Lazy.nvim etc.); it's advised t
 "hinell/lsp-timeout.nvim"
 ```
 
-Requirements:
+REQUIREMENTS:
 
 * Neovim v0.7.2+
 * nvim-lspconfig: https://github.com/neovim/nvim-lspconfig
@@ -87,7 +88,7 @@ local Config = require("lsp-timeout.config").Config
       Config:new(vim.g.lspTimeoutConfig):validate()
 ```
 
-### Augroups
+### AUGROUPS
 
 Plugin setups two augroups:
 * `LSPTimeout` - global augroup for various events 

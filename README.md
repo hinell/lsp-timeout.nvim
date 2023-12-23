@@ -27,7 +27,6 @@ automatically upon gaining or loosing window focus, keeping neovim fast.
 - Lower RAM usage by unsed Neovim system window
 
 ## 🔒Requirements
-
 - [Neovim 0.7.2+](https://github.com/neovim/neovim/releases)
 - [nvim-lspconfig](https://github.com/neovim/nvim-lspconfig)
 
@@ -37,8 +36,8 @@ automatically upon gaining or loosing window focus, keeping neovim fast.
 ```lua
 require("lazy").setup(
     {
-	"hinell/lsp-timeout.nvim",
-	dependencies={ "neovim/nvim-lspconfig" }
+        "hinell/lsp-timeout.nvim",
+        dependencies={ "neovim/nvim-lspconfig" }
     }
 )
 ```
@@ -66,18 +65,21 @@ Plug "hinell/lsp-timeout.nvim"
 ### [CONTRIBUTING]
 ### [DEVELOPMENT]
 
-[DOCUMENTATION]: doc/index.md 'Contribution instructions (see also source code files)'
+[DOCUMENTATION]: doc/lsp-timeout.md 'Contribution instructions (see also source code files)'
 [CONTRIBUTING]: CONTRIBUTING.md 'Contribution instructions (see also source code files)'
 [DEVELOPMENT]: DEVELOPMENT.md 'Devloper documentation (see also source code files)'
-[d]: #project
 
-### SUPPORT DISCLAIMER
-[ps]: #production-status--support 'Production use disclaimer & support info'
+### [SUPPORT DISCLAIMER][SD]
+[SD]: #production-status--support 'Production use disclaimer & support info'
 
 _NO GUARANTEES UNTIL PAID. This project is supported and provided AS IS. See also [LICENSE]._
 
 [LICENSE]: LICENSE
 
+### SEE ALSO
+* [@hinell/lsp-timeout.nvim](https://github.com/hinell/lsp-timeout.nvim) -  halt LSP servers when you leave nvim window 
+* [@hinell/duplicate.nvim](https://github.com/hinell/duplicate.nvim) - duplicate selection
+* [@hinell/nvim-tree-git.nvim](https://github.com/hinell/nvim-tree-git.nvim) - GIT integration plugin for infamous file explorer 
 ----
 
 September 26, 2023</br>
